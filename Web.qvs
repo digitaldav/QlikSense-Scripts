@@ -1,0 +1,21 @@
+Set cssEjemplo = ' style=background:#8fD0CA;';
+
+
+Let vInlineDelim = Chr(07);
+
+Weblog:
+load * inline [
+<!DOCTYPE html>
+<html >
+  <head>
+      <title> Prueba HTML </title> 
+      <style></style>
+  </head>
+  <body>
+      <header> Prueba </header>
+      <p $(cssEjemplo)> Prueba </p>
+  </body>
+</html>
+] (DELIMITER IS '$(vInlineDelim)');
+
+STORE Weblog into [lib://QVD/prueba.html] (txt, DELIMITER IS '$(vInlineDelim)');

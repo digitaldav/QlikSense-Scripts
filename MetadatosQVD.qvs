@@ -1,0 +1,32 @@
+//Obtener metadatos de un fichero QVD
+
+
+Set vFichero = 'lib://QVD/Datos.qvd';
+
+Metadatos_QVD:
+LOAD
+	autonumber('$(vFichero)') as Clv,
+    FilePath() as Directorio,
+    FileName() as [Nombre Fichero],
+    FileSize() as Size, 
+    FileTime() as [Fecha Creación / Última mod.],
+	TableName as [Nombre Tabla]
+FROM '$(vFichero)' (XmlSimple, Table is [QvdTableHeader]);
+
+
+Campos_QVD:
+LOAD 
+	autonumber('$(vFichero)') as Clv,
+    FieldName as [Nombre Campo],
+	BitOffset,
+	BitWidth,
+	Bias,
+	NoOfSymbols,
+	Offset as HeaderOffset,
+	Length as HeaderLength,
+	[NumberFormat/Type] as Type,
+	[NumberFormat/nDec] as nDec,
+	[NumberFormat/UseThou] as UseThou,
+	[NumberFormat/Fmt] as Fmt,
+	[NumberFormat/Dec] as Dec
+FROM '$(vFichero)' (XmlSimple, Table is [QvdTableHeader/Fields/QvdFieldHeader]);

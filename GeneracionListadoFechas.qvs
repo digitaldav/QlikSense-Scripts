@@ -1,0 +1,36 @@
+Let vFecha = MonthEnd(AddMonths(Today(),-1));
+
+
+Let NMeses = 13;
+
+for contador= 1 to $(NMeses) step 1
+    Let fecha = date(monthend(AddMonths(Today(),$(contador)*-1)), 'DD/MM/YYYY');
+    trace $(fecha);
+    Fechas:
+    load   
+        date(monthend(AddMonths(Today(),$(contador)*-1)), 'DD/MM/YYYY') as Fechas
+    Autogenerate(1);
+next;
+
+FechaMaxima:
+Load
+    date(max(Fechas),'DD/MM/YYYY') as fmax
+Resident Fechas;
+
+Let vFechaMaxima = peek('fmax');
+ 
+
+ListadoFechas:
+Load
+    chr(39) & concat(DATE(num(Fechas),'DD/MM/YYYY'), chr(39) & ',' & chr(39) ,  DATE(num(Fechas),'DD/MM/YYYY')) & chr(39) as Lista
+Resident Fechas;
+
+Let vListadoFechas = peek('Lista');
+
+drop table FechaMaxima, ListadoFechas;
+
+for each fecha in $(vListadoFechas)
+
+    trace -- $(fecha);
+
+next;

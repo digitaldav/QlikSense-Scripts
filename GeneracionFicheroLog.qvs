@@ -1,0 +1,37 @@
+//Generacion de fichero txt simulando un log.
+
+/*
+* logData: nombre de la tabla log
+* DATA: informacion que se añade al log
+*/
+sub CreateAddLog(logData, DATA)
+    if isnull(DATA) then
+        trace -- WARNING: Llamada a la subrutina CreateAddLog con datos nulos;
+    end if;
+    
+    Let DATA = now() & ' - ' & DATA;
+    
+    $(logData):
+    load * inline [
+        FicheroLog
+        $(DATA)
+    ];
+end sub
+
+/*
+* logData: nombre de la tabla log
+* fileName: directorio y nombre del fichero log
+*/
+SUB SaveLog(logData, fileName)
+    Store $(logData) into $(fileName).txt (txt);
+end SUB
+
+
+
+call CreateAddLog('PruebaLog', 'Inicio fichero');
+
+call CreateAddLog('PruebaLog','Segundo registro');
+
+call CreateAddLog('PruebaLog','Tercer registro');
+
+call SaveLog('PruebaLog','lib://QVD/PruebaLog'); 

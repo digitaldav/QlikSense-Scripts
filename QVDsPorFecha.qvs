@@ -1,0 +1,64 @@
+//Almacenar datos en distintos QVD según fecha
+
+Datos:
+Load * inline [
+Fecha, Dato1, Dato2, Dato3
+31/01/2024, D1A, D2A, 13
+31/01/2024, D1B, D2B, 55
+31/01/2024, D1C, D2C, 12
+31/01/2024, D1D, D2D, 73
+31/01/2024, D1E, D2E, 11
+31/01/2024, D1F, D2F, 65
+31/01/2024, D1G, D2G, 27
+
+29/02/2024, D1A, D2A, 1213
+29/02/2024, D1B, D2B, 545
+29/02/2024, D1F, D2F, 651
+29/02/2024, D1G, D2G, 272
+
+31/03/2024, D1A, D2A, 143
+31/03/2024, D1B, D2B, 512
+31/03/2024, D1E, D2E, 1311
+31/03/2024, D1F, D2F, 6135
+31/03/2024, D1G, D2G, 2317
+
+30/04/2024, D1A, D2A, 513
+30/04/2024, D1B, D2B, 5545
+30/04/2024, D1C, D2C, 5124
+30/04/2024, D1D, D2D, 173
+30/04/2024, D1E, D2E, 211
+30/04/2024, D1F, D2F, 5265
+];
+
+
+TEMP_Fechas:
+Load
+	distinct date(Fecha,'DD/MM/YYYY') as fecha
+Resident Datos;
+
+ListadoFechas:
+Load
+    chr(39) & concat(DATE(num(fecha),'DD/MM/YYYY'), chr(39) & ',' & chr(39) ,  DATE(num(fecha),'DD/MM/YYYY')) & chr(39) as Lista
+Resident TEMP_Fechas;
+
+Let vListadoFechas = peek('Lista');
+
+drop table TEMP_Fechas, ListadoFechas;
+
+for each fecha in $(vListadoFechas)
+
+	Let YearMonth = date(fecha,'YYYYMM');
+    
+    TEMP_Datos:
+    NoConcatenate Load
+    	*
+    Resident Datos where date(Fecha,'DD/MM/YYYY') = date('$(fecha)','DD/MM/YYYY');
+    
+    STORE TEMP_Datos into 'lib://QVD/Datos_$(YearMonth).qvd' (qvd) ;
+	
+    drop table TEMP_Datos;
+    
+next;
+
+
+Drop table Datos;
